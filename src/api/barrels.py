@@ -31,11 +31,11 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
 
-    with db.engine.begin() as connection: 
-         #gives num potions
-        result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory WHERE id=1"))
-        # if result < 10:
-        print(result)    
+    # with db.engine.begin() as connection: 
+    #      #gives num potions
+    #     result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory WHERE id=1"))
+    #     if result < 10:
+    #     print(result)    
         
 
 
