@@ -1,3 +1,5 @@
+import sqlalchemy
+from src import database as db
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -20,3 +22,5 @@ def get_catalog():
                 "potion_type": [100, 0, 0, 0],
             }
         ]
+# with db.engine.begin() as connection:
+#         result = connection.execute(sql_to_execute)
