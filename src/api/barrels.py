@@ -42,8 +42,8 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                 if barrel.sku == "SMALL_RED_BARREL": 
                     price += barrel.price
         
-            remaining_gold = gold.fetchone() - price
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = %d WHERE id=1", remaining_gold[0]))            
+            remaining_gold = gold.fetchone()[0] - price
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = %d WHERE id=1", remaining_gold))            
             return [
                 {
                     "sku": "SMALL_RED_BARREL",
