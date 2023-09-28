@@ -35,14 +35,15 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
          #gives num potions
         result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory WHERE id=1"))
         data = result.fetchone()
+        price = 0
         if data[0] < 10:
             gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory WHERE id=1"))
             for barrel in wholesale_catalog: 
                 if barrel.sku == "SMALL_RED_BARREL": 
-                    price = barrel.price
+                    price += barrel.price
         
             remaining_gold = gold.fetchone() - price
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = %d WHERE id=1", remaining_gold))            
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = %d WHERE id=1", remaining_gold[0]))            
             return [
                 {
                     "sku": "SMALL_RED_BARREL",
