@@ -43,7 +43,9 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     price += barrel.price
         
             remaining_gold = gold.fetchone()[0] - price
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = %s WHERE id=1"), remaining_gold)
+            sql = sqlalchemy.text("UPDATE global_inventory SET gold=:gold WHERE id=1")
+            connection.execute(sql, gold=remaining_gold)
+            # connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=%s WHERE id=1"), remaining_gold)
                         
             return [
                 {
