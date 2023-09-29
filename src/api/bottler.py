@@ -18,9 +18,27 @@ class PotionInventory(BaseModel):
 @router.post("/deliver")
 def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
-    print(potions_delivered)
+    with db.engine.begin() as connection: 
+        result = connection.execute(sqlalchemy.text("SELECT num_red_potions, num_red_ml FROM global_inventory WHERE id=1"))
+        data = result.fetchone()
+        num_red_potions = data[0]
+        num_red_ml = data[1]
+        for potion in potions_delivered:
+            #if we have a red potion add to num_red_potions
+            #also subtract from num red ml when bottling potions 
+            if potion.potion_type[0] == 100:
+                num_red_potions += potion.quantity
+                num_red_ml -= potion.quantity * 100
+        
+        value = {'potions':num_red_potions}
+        value2 = {'ml':num_red_ml}
+        sql = sqlalchemy.text("UPDATE global_inventory SET num_red_potions=:potions")
+        sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:ml")
+        connection.execute(sql, value)
+        connection.execute(sql2, value2)
 
-    return "OK"
+        print(potions_delivered)
+        return "OK"
 
 # Gets called 4 times a day
 @router.post("/plan")
@@ -39,7 +57,7 @@ def get_bottle_plan():
         ml = result.fetchone()
         ml = ml[0]
         quantity = ml / 100
-        
+        print("bottle quantity: " + str(quantity))
         return [
                 {
                     "potion_type": [100, 0, 0, 0],
