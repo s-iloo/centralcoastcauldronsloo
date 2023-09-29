@@ -40,9 +40,9 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         value2 = {'mlset':remaining_ml}
         sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:mlset")
         connection.execute(sql2, value2)
-        print("your remaining gold is " + remaining_gold)
-        print("your remaining ml is " + remaining_ml)
-        
+        print("your remaining gold is " + str(remaining_gold))
+        print("your remaining ml is " + str(remaining_ml))
+
         return "OK"
 
 # Gets called once a day
