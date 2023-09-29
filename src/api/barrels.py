@@ -22,38 +22,46 @@ class Barrel(BaseModel):
 @router.post("/deliver")
 def post_deliver_barrels(barrels_delivered: list[Barrel]):
     """ """
-    print(barrels_delivered)
-
-    return "OK"
+    with db.engine.begin() as connection: 
+        result = connection.execute(sqlalchemy.text("SELECT gold, num_red_ml FROM global_inventory WHERE id=1"))
+        data = result.fetchone()
+        gold = data[0]
+        num_red_ml = data[1]
+        for barrel in barrels_delivered:
+            price += barrel.price
+            ml += barrel.ml_per_barrel
+        
+        remaining_gold = gold - price
+        remaining_ml = num_red_ml + ml
+        value ={'goldset':remaining_gold}
+        sql = sqlalchemy.text("UPDATE global_inventory SET gold=:goldset")
+        connection.execute(sql, value)
+        value2 = {'mlset':remaining_ml}
+        sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:mlset")
+        connection.execute(sql2, value2)
+        
+        return "OK"
 
 # Gets called once a day
 @router.post("/plan")
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
-
     with db.engine.begin() as connection: 
-         #gives num potions
-        result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory WHERE id=1"))
+        #get num red potions
+        result = connection.execute(sqlalchemy.text("SELECT num_red_potions, gold FROM global_inventory WHERE id=1"))
+        #parse to get int
         data = result.fetchone()
-        price = 0
-        if data[0] < 10:
-            gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory WHERE id=1"))
-            for barrel in wholesale_catalog: 
-                if barrel.sku == "SMALL_RED_BARREL": 
-                    price += barrel.price
-        
-            remaining_gold = gold.fetchone()[0] - price
-            value = {'goldset':remaining_gold}
-            sql = sqlalchemy.text("UPDATE global_inventory SET gold=:goldset WHERE id=1")
-            connection.execute(sql, value)
-            # connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=%s WHERE id=1"), remaining_gold)
-                        
-            return [
-                {
-                    "sku": "SMALL_RED_BARREL",
-                    "quantity": 1,
-                }
-            ]
-        else:
-            print(result)    
-            print(wholesale_catalog)
+        num_red_potions = data[0]
+        gold = data[1]
+        #check if inventory is less than 10 
+        if num_red_potions < 10:
+            for barrel in wholesale_catalog:
+                if barrel.sku == "SMALL_RED_BARREL":
+                    if gold >= barrel.price: 
+                        return [
+                            {
+                            "sku": "SMALL_RED_BARREL",
+                            "quantity": barrel.quantity,
+                            }
+                        ]
+        return "INVENTORY LESS THAN 10"

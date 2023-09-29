@@ -1,5 +1,5 @@
-# import sqlalchemy
-# from src import database as db
+import sqlalchemy
+from src import database as db
 from fastapi import APIRouter, Depends
 from enum import Enum
 from pydantic import BaseModel
@@ -34,12 +34,15 @@ def get_bottle_plan():
     # Expressed in integers from 1 to 100 that must sum up to 100.
 
     # Initial logic: bottle all barrels into red potions.
-
-    return [
-            {
-                "potion_type": [100, 0, 0, 0],
-                "quantity": 5,
-            }
-        ]
-# with db.engine.begin() as connection:
-#         result = connection.execute(sql_to_execute)
+    with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory WHERE id=1"))
+        ml = result.fetchone()
+        ml = ml[0]
+        quantity = ml / 100
+        
+        return [
+                {
+                    "potion_type": [100, 0, 0, 0],
+                    "quantity": quantity,
+                }
+            ]
