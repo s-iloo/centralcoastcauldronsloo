@@ -26,11 +26,12 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         result = connection.execute(sqlalchemy.text("SELECT gold, num_red_ml FROM global_inventory WHERE id=1"))
         data = result.fetchone()
         gold = data[0]
+        price = 0
+        ml = 0
         num_red_ml = data[1]
         for barrel in barrels_delivered:
             price += barrel.price
             ml += barrel.ml_per_barrel
-        
         remaining_gold = gold - price
         remaining_ml = num_red_ml + ml
         value ={'goldset':remaining_gold}
@@ -39,6 +40,8 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         value2 = {'mlset':remaining_ml}
         sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:mlset")
         connection.execute(sql2, value2)
+        print("your remaining gold is " + remaining_gold)
+        print("your remaining ml is " + remaining_ml)
         
         return "OK"
 
