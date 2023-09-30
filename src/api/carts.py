@@ -69,7 +69,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                 new_num_red_potions = num_red_potions - 1
                 new_gold = gold + int(cart_checkout.payment)
                 
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_red_potions=:potionset"),{'goldset':new_gold}, {'potionset':new_num_red_potions})
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_red_potions=:potionset"),{'goldset':new_gold,'potionset':new_num_red_potions})
                 return {"total_potions_bought": 1, "total_gold_paid": 50}
             else: 
                 return "INSUFFICIENT PAYMENT"
