@@ -64,7 +64,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         #if there's stock
         if(num_red_potions > 0):
             #check if customer paid enough
-            if(cart_checkout.payment >= 50):
+            if(int(cart_checkout.payment) >= 50):
                 #add to gold and subtract from potion stock 
                 new_num_red_potions = num_red_potions - 1
                 new_gold = gold + cart_checkout.payment
