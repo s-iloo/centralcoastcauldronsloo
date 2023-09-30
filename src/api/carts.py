@@ -67,7 +67,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             if(int(cart_checkout.payment) >= 50):
                 #add to gold and subtract from potion stock 
                 new_num_red_potions = num_red_potions - 1
-                new_gold = gold + cart_checkout.payment
+                new_gold = gold + int(cart_checkout.payment)
                 
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_red_potions=:potionset"),{'goldset':new_gold}, {'potionset':new_num_red_potions})
                 return {"total_potions_bought": 1, "total_gold_paid": 50}
