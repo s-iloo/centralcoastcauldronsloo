@@ -67,4 +67,4 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                             "quantity": barrel.quantity,
                             }
                         ]
-        return "INVENTORY LESS THAN 10"
+        return []

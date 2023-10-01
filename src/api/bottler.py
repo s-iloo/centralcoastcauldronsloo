@@ -61,9 +61,12 @@ def get_bottle_plan():
         ml = ml[0]
         quantity = ml / 100
         print("bottle quantity: " + str(quantity))
-        return [
-                {
-                    "potion_type": [100, 0, 0, 0],
-                    "quantity": quantity,
-                }
-            ]
+        if quantity > 0:
+            return [
+                    {
+                        "potion_type": [100, 0, 0, 0],
+                        "quantity": quantity,
+                    }
+                ]
+        else: 
+            return []
