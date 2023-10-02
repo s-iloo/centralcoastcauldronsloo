@@ -29,9 +29,11 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         price = 0
         ml = 0
         num_red_ml = data[1]
+        #CHANGE THIS LATER BECAUSE YOU WILL HAVE MORE THAN ONE BARREL
         for barrel in barrels_delivered:
-            price += barrel.price
-            ml += barrel.ml_per_barrel
+            price = barrel.price
+            ml = barrel.ml_per_barrel * barrel.quantity
+            
         remaining_gold = gold - price
         remaining_ml = num_red_ml + ml
         value ={'goldset':remaining_gold}
@@ -64,7 +66,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                         return [
                             {
                             "sku": "SMALL_RED_BARREL",
-                            "quantity": barrel.quantity,
+                            "quantity": 1,
                             }
                         ]
         return []
