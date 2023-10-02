@@ -59,7 +59,7 @@ def get_bottle_plan():
         result = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory WHERE id=1"))
         ml = result.fetchone()
         ml = ml[0]
-        quantity = ml / 100
+        quantity = ml // 100
         print("bottle quantity: " + str(quantity))
         if quantity > 0:
             return [
