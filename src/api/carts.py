@@ -42,12 +42,10 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     with db.engine.begin() as connection: 
         result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory WHERE id=1"))
         data = result.fetchone()
-
         if(data[0] >= cart_item.quantity and item_sku == "RED_POTION"):
             return "OK"
         else:
             return "QUANTITY TOO HIGH"
-
 
 class CartCheckout(BaseModel):
     payment: str
@@ -61,19 +59,16 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         data = result.fetchone()
         num_red_potions = data[0]
         gold = data[1]
-        if(cart_checkout.payment.isnumeric() == False):
-            return "INSUFFICIENT PAYMENT"
+        # if(cart_checkout.payment.isnumeric() == False):
+        #     return "INSUFFICIENT PAYMENT"
         #if there's stock
         if(num_red_potions > 0):
             #check if customer paid enough
-            if(int(cart_checkout.payment) >= 50):
-                #add to gold and subtract from potion stock 
-                new_num_red_potions = num_red_potions - 1
-                new_gold = gold + int(cart_checkout.payment)
+            #add to gold and subtract from potion stock 
+            new_num_red_potions = num_red_potions - 1
+            new_gold = gold + 50
                 
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_red_potions=:potionset"),{'goldset':new_gold,'potionset':new_num_red_potions})
-                return {"total_potions_bought": 1, "total_gold_paid": 50}
-            else: 
-                return "INSUFFICIENT PAYMENT"
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_red_potions=:potionset"),{'goldset':new_gold,'potionset':new_num_red_potions})
+            return {"total_potions_bought": 1, "total_gold_paid": 50}
         else: 
             return "OUT OF STOCK"
