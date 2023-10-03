@@ -33,8 +33,6 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
         value = {'potions':num_red_potions}
         value2 = {'ml':num_red_ml}
 
-        # "UPDATE global_inventory SET num_red_potions=:potions, "
-
         sql = sqlalchemy.text("UPDATE global_inventory SET num_red_potions=:potions",)
         sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:ml")
         connection.execute(sql, value)
