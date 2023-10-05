@@ -34,17 +34,17 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 
         for barrel in barrels_delivered:
             #means its red
-            if barrel.sku == "SMALL_RED_BARREL":
+            if barrel.sku == "MINI_RED_BARREL":
                 #only buying one barrel rn 
                 num_red_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price
+                gold -= barrel.price * barrel.quantity
             #means its green 
-            elif barrel.sku == "SMALL_GREEN_BARREL": 
+            elif barrel.sku == "MINI_GREEN_BARREL": 
                 num_green_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price
-            elif barrel.sku == "SMALL_BLUE_BARREL":
+                gold -= barrel.price * barrel.quantity
+            elif barrel.sku == "MINI_BLUE_BARREL":
                 num_blue_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price
+                gold -= barrel.price * barrel.quantity
             
             
         # remaining_gold = gold - price
@@ -99,20 +99,20 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
             pot_type = potion[0]
             for barrel in wholesale_catalog:
                 if pot_type == "red":
-                    if barrel.sku == "SMALL_RED_BARREL":
-                        if gold >= barrel.price:
-                            gold -= barrel.price
-                            plan.append({"sku": "SMALL_RED_BARREL", "quantity": 1}) 
+                    if barrel.sku == "MINI_RED_BARREL":
+                        if gold >= barrel.price * barrel.quantity:
+                            gold -= barrel.price * barrel.quantity
+                            plan.append({"sku": "MINI_RED_BARREL", "quantity": barrel.quantity}) 
                 if pot_type == "blue":
                     if barrel.sku == "SMALL_BLUE_BARREL":
-                        if gold >= barrel.price: 
-                            gold -= barrel.price
-                            plan.append({"sku": "SMALL_BLUE_BARREL", "quantity": 1})
+                        if gold >= barrel.price * barrel.quantity: 
+                            gold -= barrel.price * barrel.quantity
+                            plan.append({"sku": "MINI_BLUE_BARREL", "quantity": barrel.quantity})
                 if pot_type == "green":
                     if barrel.sku == "SMALL_GREEN_BARREL":
-                        if gold >= barrel.price: 
-                            gold -= barrel.price
-                            plan.append({"sku": "SMALL_GREEN_BARREL", "quantity": 1})
+                        if gold >= barrel.price * barrel.quantity: 
+                            gold -= barrel.price * barrel.quantity
+                            plan.append({"sku": "MINI_GREEN_BARREL", "quantity": barrel.quantity})
         print(plan)
         print(gold)
 
