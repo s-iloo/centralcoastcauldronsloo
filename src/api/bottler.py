@@ -27,7 +27,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
         num_green_potions = data[2]
         num_green_ml = data[3]
         num_blue_potions = data[4]
-        num_blue__ml = data[5]
+        num_blue_ml = data[5]
 
         for potion in potions_delivered:
             #if we have a red potion add to num_red_potions
@@ -40,14 +40,14 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                 num_green_ml -= potion.quantity * 100
             elif potion.potion_type[2] == 100: 
                 num_blue_potions += potion.quantity
-                num_blue__ml -= potion.quantity * 100
+                num_blue_ml -= potion.quantity * 100
         
         value = {'red_potions':num_red_potions}
         value2 = {'red_ml':num_red_ml}
         value3 = {'green_potions': num_green_potions}
         value4 = {'green_ml':num_green_ml}
         value5 = {'blue_potions': num_blue_potions}
-        value6 = {'blue_ml': num_blue__ml}
+        value6 = {'blue_ml': num_blue_ml}
 
         sql = sqlalchemy.text("UPDATE global_inventory SET num_red_potions=:red_potions",)
         sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:red_ml")
