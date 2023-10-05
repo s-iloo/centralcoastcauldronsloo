@@ -104,12 +104,12 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                             gold -= barrel.price * barrel.quantity
                             plan.append({"sku": "MINI_RED_BARREL", "quantity": barrel.quantity}) 
                 if pot_type == "blue":
-                    if barrel.sku == "SMALL_BLUE_BARREL":
+                    if barrel.sku == "MINI_BLUE_BARREL":
                         if gold >= barrel.price * barrel.quantity: 
                             gold -= barrel.price * barrel.quantity
                             plan.append({"sku": "MINI_BLUE_BARREL", "quantity": barrel.quantity})
                 if pot_type == "green":
-                    if barrel.sku == "SMALL_GREEN_BARREL":
+                    if barrel.sku == "MINI_GREEN_BARREL":
                         if gold >= barrel.price * barrel.quantity: 
                             gold -= barrel.price * barrel.quantity
                             plan.append({"sku": "MINI_GREEN_BARREL", "quantity": barrel.quantity})
