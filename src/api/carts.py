@@ -85,7 +85,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         num_green_potions = data[1]
         num_blue_potions = data[2]
         gold = data[3]
-        cart = cart_memory[cartID]
+        cart = cart_memory[cart_id]
         print(cart)
         # potion_type = cart["potion_type"]
         total_potions = 0
