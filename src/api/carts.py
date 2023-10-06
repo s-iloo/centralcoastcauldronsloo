@@ -20,6 +20,8 @@ cartID = 0
 @router.post("/")
 def create_cart(new_cart: NewCart):
     """ """
+    print("customer:")
+    print(new_cart.customer)
     global cartID
     cartID += 1
     cart_memory[cartID] = []
