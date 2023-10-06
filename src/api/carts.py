@@ -81,6 +81,8 @@ class CartCheckout(BaseModel):
 @router.post("/{cart_id}/checkout")
 def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
+    print("payment: ")
+    print(cart_checkout.payment)
     #only allowing customers to buy one potion right now
     with db.engine.begin() as connection: 
         result = connection.execute(sqlalchemy.text("SELECT num_red_potions, num_green_potions, num_blue_potions, gold FROM global_inventory WHERE id=1"))
