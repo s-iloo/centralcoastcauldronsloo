@@ -34,7 +34,7 @@ def get_catalog():
                 "name": "blue potion",
                 "quantity": num_blue_potions,
                 "price": 50,                        
-                "potion_type": [0, 100, 0, 0],
+                "potion_type": [0, 0, 100, 0],
             })
         if num_green_potions > 0: 
             result.append({
@@ -42,7 +42,7 @@ def get_catalog():
                 "name": "green potion",
                 "quantity": num_green_potions,
                 "price": 50,                        
-                "potion_type": [0, 0, 100, 0],
+                "potion_type": [0, 100, 0, 0],
             })
         
         return result
