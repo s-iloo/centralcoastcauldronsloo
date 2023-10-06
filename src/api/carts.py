@@ -56,20 +56,20 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
         if item_sku == "RED_POTION":
             if num_red_potions >= cart_item.quantity:
                 # cart_memory[cartID] = ([{"potion_type": [100, 0, 0, 0], "quantity": cart_item.quantity}])
-                cart_memory[cartID].append({"potion_type": [100, 0, 0, 0], "quantity": cart_item.quantity})
+                cart_memory[cart_id].append({"potion_type": [100, 0, 0, 0], "quantity": cart_item.quantity})
                 return "OK"
             else:
                 return "QUANTITY TOO HIGH"
         elif item_sku == "GREEN_POTION":
             if num_green_potions >= cart_item.quantity:
                 # cart_memory[cartID] = {"potion_type": [0, 100, 0, 0], "quantity": cart_item.quantity}
-                cart_memory[cartID].append({"potion_type": [0, 100, 0, 0], "quantity": cart_item.quantity})
+                cart_memory[cart_id].append({"potion_type": [0, 100, 0, 0], "quantity": cart_item.quantity})
             else:
                 return "QUANTITY TOO HIGH"
         elif item_sku == "BLUE_POTION":
             if num_blue_potions >= cart_item.quantity:
                 # cart_memory[cartID] = {"potion_type": [0, 0, 100, 0], "quantity": cart_item.quantity}
-                cart_memory[cartID].append({"potion_type": [0, 0, 100, 0], "quantity": cart_item.quantity})
+                cart_memory[cart_id].append({"potion_type": [0, 0, 100, 0], "quantity": cart_item.quantity})
             else:
                 return "QUANTITY TOO HIGH"
 
