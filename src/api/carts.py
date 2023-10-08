@@ -120,7 +120,8 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold=:goldset, num_blue_potions=:blue_potion"), {'goldset':gold, 'blue_potion': num_blue_potions})
         #if there's stock
 
-        
+        print("total gold is: " + str(gold))
+        print("total gold paid is: "  + str(total_potions * 50))
 
         # if(num_red_potions > 0):
         #     #check if customer paid enough
