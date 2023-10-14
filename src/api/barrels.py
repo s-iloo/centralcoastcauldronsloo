@@ -34,15 +34,15 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 
         for barrel in barrels_delivered:
             #means its red
-            if barrel.sku == "MINI_RED_BARREL":
+            if barrel.sku == "SMALL_RED_BARREL":
                 #only buying one barrel rn 
                 num_red_ml += barrel.ml_per_barrel * barrel.quantity
                 gold -= barrel.price * barrel.quantity
             #means its green 
-            elif barrel.sku == "MINI_GREEN_BARREL": 
+            elif barrel.sku == "SMALL_GREEN_BARREL": 
                 num_green_ml += barrel.ml_per_barrel * barrel.quantity
                 gold -= barrel.price * barrel.quantity
-            elif barrel.sku == "MINI_BLUE_BARREL":
+            elif barrel.sku == "SMALL_BLUE_BARREL":
                 num_blue_ml += barrel.ml_per_barrel * barrel.quantity
                 gold -= barrel.price * barrel.quantity
             
@@ -76,43 +76,43 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
     with db.engine.begin() as connection: 
         print(wholesale_catalog)
-        #get num red potions
-        # result = connection.execute(sqlalchemy.text("SELECT num_red_potions, gold FROM global_inventory WHERE id=1"))
-        result = connection.execute(sqlalchemy.text("SELECT num_red_potions, num_blue_potions, num_green_potions, gold FROM global_inventory WHERE id=1"))
+        #get num ml 
+        result = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_blue_ml, num_green_ml, gold FROM global_inventory WHERE id=1"))
         #parse to get int
         data = result.fetchone()
         # num_red_potions = data[0]
 
         # getting all the inventory that i have and my gold
-        num_red_potions = data[0]
-        num_blue_potions = data[1]
-        num_green_potions = data[2]
+        num_red_ml = data[0]
+        num_blue_ml = data[1]
+        num_green_ml = data[2]
         gold = data[3]
 
-        potions = [("red", num_red_potions), ("blue", num_blue_potions), ("green", num_green_potions)]
+        potions = [("red", num_red_ml), ("blue", num_blue_ml), ("green", num_green_ml)]
         potions = sorted(potions, key=lambda x: x[1])
-    
+
         print(gold)
         print(potions)
         plan = []
+        # plan buy barrels based on num_ml of potions
         for potion in potions:
             pot_type = potion[0]
             for barrel in wholesale_catalog:
                 if pot_type == "red":
-                    if barrel.sku == "MINI_RED_BARREL":
-                        if gold >= barrel.price * barrel.quantity:
-                            gold -= barrel.price * barrel.quantity
-                            plan.append({"sku": "MINI_RED_BARREL", "quantity": barrel.quantity}) 
+                    if barrel.sku == "SMALL_RED_BARREL":
+                        if gold >= barrel.price:
+                            gold -= barrel.price
+                            plan.append({"sku": "SMALL_RED_BARREL", "quantity": 1}) 
                 if pot_type == "blue":
-                    if barrel.sku == "MINI_BLUE_BARREL":
-                        if gold >= barrel.price * barrel.quantity: 
-                            gold -= barrel.price * barrel.quantity
-                            plan.append({"sku": "MINI_BLUE_BARREL", "quantity": barrel.quantity})
+                    if barrel.sku == "SMALL_BLUE_BARREL":
+                        if gold >= barrel.price: 
+                            gold -= barrel.price
+                            plan.append({"sku": "SMALL_BLUE_BARREL", "quantity": 1})
                 if pot_type == "green":
-                    if barrel.sku == "MINI_GREEN_BARREL":
-                        if gold >= barrel.price * barrel.quantity: 
-                            gold -= barrel.price * barrel.quantity
-                            plan.append({"sku": "MINI_GREEN_BARREL", "quantity": barrel.quantity})
+                    if barrel.sku == "SMALL_GREEN_BARREL":
+                        if gold >= barrel.price: 
+                            gold -= barrel.price
+                            plan.append({"sku": "SMALL_GREEN_BARREL", "quantity": 1})
         print(plan)
         print(gold)
 
