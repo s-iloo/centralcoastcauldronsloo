@@ -99,7 +99,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             #increment total_potions
             total_potions += qty
             #increment gold
-            connection.execute(sqlalchemy.text("UPDATE global_inventory set gold= gold + :price"), {'price':qty * 50})
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + :price"), {'price':qty * 50})
         print("total gold paid is: "  + str(total_potions * 50))
          
         return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*50}
