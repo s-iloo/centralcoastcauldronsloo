@@ -25,48 +25,34 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     with db.engine.begin() as connection: 
         print("barrels_delivered")
         print(barrels_delivered)
-        result = connection.execute(sqlalchemy.text("SELECT gold, num_red_ml, num_blue_ml, num_green_ml FROM global_inventory WHERE id=1"))
-        data = result.fetchone()
-        gold = data[0]
-        num_red_ml = data[1]
-        num_blue_ml = data[2]
-        num_green_ml = data[3]
-
+        num_red_ml = 0
+        num_blue_ml = 0
+        num_green_ml = 0
+        gold = 0
         for barrel in barrels_delivered:
             #means its red
             if barrel.sku == "SMALL_RED_BARREL":
                 #only buying one barrel rn 
                 num_red_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price * barrel.quantity
+                gold += barrel.price * barrel.quantity
             #means its green 
             elif barrel.sku == "SMALL_GREEN_BARREL": 
                 num_green_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price * barrel.quantity
+                gold += barrel.price * barrel.quantity
             elif barrel.sku == "SMALL_BLUE_BARREL":
                 num_blue_ml += barrel.ml_per_barrel * barrel.quantity
-                gold -= barrel.price * barrel.quantity
-            
-            
-        # remaining_gold = gold - price
-        # remaining_ml = num_red_ml + ml
-        value ={'goldset':gold}
-        sql = sqlalchemy.text("UPDATE global_inventory SET gold=:goldset")
-        connection.execute(sql, value)
-
-        value2 = {'red_ml':num_red_ml}
-        sql2 = sqlalchemy.text("UPDATE global_inventory SET num_red_ml=:red_ml")
-        connection.execute(sql2, value2)
-
-        value3 = {'green_ml': num_green_ml}
-        sql3 = sqlalchemy.text("UPDATE global_inventory SET num_green_ml=:green_ml")
-        connection.execute(sql3, value3)
-
-        value4 = {'blue_ml': num_blue_ml}
-        sql4 = sqlalchemy.text("UPDATE global_inventory SET num_blue_ml=:blue_ml")
-        connection.execute(sql4, value4)
-
-        print("your remaining gold is " + str(gold))
-        print("your remaining red ml is " + str(num_red_ml) + ", green ml is " + str(num_green_ml) + ", blue ml is " + str(num_blue_ml))
+                gold += barrel.price * barrel.quantity
+        if gold > 0:
+            connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:goldset)"), {'goldset':-gold})
+        if num_red_ml > 0:
+            connection.execute(sqlalchemy.text("INSERT INTO red_ml_ledger (change) VALUES (:red_ml)"), {'red_ml':num_red_ml})
+        if num_green_ml > 0:
+            connection.execute(sqlalchemy.text("INSERT INTO green_ml_ledger (change) VALUES (:green_ml)"), {'green_ml':num_green_ml})
+        if num_blue_ml > 0:
+            connection.execute(sqlalchemy.text("INSERT INTO blue_ml_ledger (change) VALUES (:blue_ml)"), {'blue_ml':num_blue_ml})
+        
+        print("GOLD CHANGE " + str(-gold))
+        print("RED CHANGE " + str(num_red_ml) + ", GREEN CHANGE " + str(num_green_ml) + ", BLUE CHANGE " + str(num_blue_ml))
 
         return "OK"
 
@@ -77,16 +63,25 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     with db.engine.begin() as connection: 
         print(wholesale_catalog)
         #get num ml 
-        result = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_blue_ml, num_green_ml, gold FROM global_inventory WHERE id=1"))
-        #parse to get int
-        data = result.fetchone()
-        # num_red_potions = data[0]
+        # result = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_blue_ml, num_green_ml, gold FROM global_inventory WHERE id=1"))
+        gold = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM gold_ledger"))
+        red = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM red_ml_ledger"))
+        green = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM green_ml_ledger"))
+        blue = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM blue_ml_ledger"))
+        red = red.fetchone()
+        print("RED ML QTY: " + str(red.balance))
+        green = green.fetchone()
+        print("GREEN ML QTY: " + str(green.balance))
+        blue = blue.fetchone()
+        print("BLUE ML QTY: " + str(blue.balance))
+        data = gold.fetchone()
+        print("GOLD QTY " + str(data.balance))
 
         # getting all the inventory that i have and my gold
-        num_red_ml = data[0]
-        num_blue_ml = data[1]
-        num_green_ml = data[2]
-        gold = data[3]
+        num_red_ml = red.balance
+        num_blue_ml = blue.balance
+        num_green_ml = green.balance
+        gold = data.balance
 
         potions = [("red", num_red_ml), ("blue", num_blue_ml), ("green", num_green_ml)]
         potions = sorted(potions, key=lambda x: x[1])

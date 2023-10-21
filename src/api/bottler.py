@@ -29,10 +29,14 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                 if [row.red, row.green, row.blue, row.dark] == potion.potion_type:
                     print(row.sku)
                     print(potion.quantity)
-                    connection.execute(sqlalchemy.text("UPDATE potions SET quantity=quantity + :qty WHERE sku=:rowsku"), {'qty':potion.quantity, 'rowsku':row.sku})
-                    connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml= num_red_ml - :rowred, num_green_ml = num_green_ml - :rowgreen, num_blue_ml = num_blue_ml - :rowblue"), {'rowred':row.red * potion.quantity, 'rowgreen':row.green * potion.quantity, 'rowblue':row.blue * potion.quantity})
-                    #UPDATE THE ROW THROUGH THE SKU WITH QTY
-                    #UPDATE THE GLOBAL INVENTORY 
+                    print("potion id is " + str(row.id))
+                    connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:qty, :id)"), {'qty':potion.quantity, 'id':row.id})
+                    if row.red > 0:
+                        connection.execute(sqlalchemy.text("INSERT INTO red_ml_ledger (change) VALUES (:red)"), {'red':-row.red * potion.quantity})
+                    if row.green > 0: 
+                        connection.execute(sqlalchemy.text("INSERT INTO green_ml_ledger (change) VALUES (:green)"), {'green':-row.green * potion.quantity})
+                    if row.blue > 0:
+                        connection.execute(sqlalchemy.text("INSERT INTO blue_ml_ledger (change) VALUES (:blue)"), {'blue':-row.blue * potion.quantity})
         print(potions_delivered)
         return "OK"
 
@@ -47,21 +51,32 @@ def get_bottle_plan():
     # green potion to add.
     # Expressed in integers from 1 to 100 that must sum up to 100.
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_green_ml, num_blue_ml FROM global_inventory WHERE id=1"))
-        # apparently this is hard coded
-        potion_inventory = connection.execute(sqlalchemy.text("SELECT red, green, blue, quantity FROM potions"))
+        # result = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_green_ml, num_blue_ml FROM global_inventory WHERE id=1"))
+        red = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM red_ml_ledger"))
+        green = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM green_ml_ledger"))
+        blue = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM blue_ml_ledger"))
+        red = red.fetchone()
+        green = green.fetchone()
+        blue = blue.fetchone()
+        num_red_ml = red.balance
+        num_blue_ml = blue.balance
+        num_green_ml = green.balance
+
+        potion_inventory = connection.execute(sqlalchemy.text("SELECT red, green, blue, quantity, id FROM potions"))
         potion_inventory = potion_inventory.fetchall()
 
         potion_list = []
         for row in potion_inventory: 
-            potion_list.append(([row.red, row.green, row.blue, 0], row.quantity))
+            quantity = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM potion_ledger WHERE potion_id = :id"), {'id': row.id})
+            quantity = quantity.fetchone()
+            potion_list.append(([row.red, row.green, row.blue, 0], quantity.balance))
         print("potion_list")
         print(potion_list)
 
-        data = result.fetchone()
-        num_red_ml = data[0]
-        num_green_ml = data[1]
-        num_blue_ml = data[2]
+        # data = result.fetchone()
+        # num_red_ml = data[0]
+        # num_green_ml = data[1]
+        # num_blue_ml = data[2]
         random.shuffle(potion_list)
         #sort the potion_list by qty
         potion_list = sorted(potion_list, key=lambda x: x[1])

@@ -60,8 +60,11 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
         potionID = potionID.fetchone()
         print("potionID ->  " + str(potionID.id))
         print("qty:")
+        quantity = connection.execute(sqlalchemy.text("SELECT SUM(change) AS balance FROM potion_ledger WHERE potion_id = :id"), {'id': potionID.id})
+        quantity = quantity.fetchone()
+        quantity = quantity.balance
         print(cart_item.quantity)
-        if cart_item.quantity < potionID.quantity:
+        if cart_item.quantity < quantity:
             connection.execute(sqlalchemy.text("INSERT INTO cart_items (potion_id, cart_id, quantity) VALUES (:potID, :cartID, :qty)"), {'potID':potionID.id, 'cartID':cart_id, 'qty':cart_item.quantity})
             return "OK"
         else: 
@@ -95,11 +98,15 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             
             #if purple decrement purple qty in potions
             print("you're buying " + potionType.sku)
-            connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity - :qtybought WHERE sku = :potsku"), {'qtybought':qty, 'potsku':potionType.sku})                
+            # connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity - :qtybought WHERE sku = :potsku"), {'qtybought':qty, 'potsku':potionType.sku})
+            connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:ch, :potID)"), {'ch':-item.quantity, 'potID': potionID})                
             #increment total_potions
             total_potions += qty
             #increment gold
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + :price"), {'price':qty * 50})
+            ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':50 * qty})
+            ledgeID = ledgeID.fetchone()
+            ledgeID = ledgeID.id
+            desc = f'Bought {qty} of {potionType.sku} with gold ledge id of {ledgeID}'
+            connection.execute(sqlalchemy.text("INSERT INTO transactions (description) VALUES (:desc)"), {'desc': desc})
         print("total gold paid is: "  + str(total_potions * 50))
-         
         return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*50}
