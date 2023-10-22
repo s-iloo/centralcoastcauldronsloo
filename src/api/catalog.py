@@ -31,7 +31,7 @@ def get_catalog():
                 "name": row.name,
                 "quantity": quantity,
                 "price": row.price,
-                "potion_type": [row.red, row.green, row.blue, row.dark]
+                "potion_type": [row.red, row.green, row.blue, row.dark],
             })
         
         return result
