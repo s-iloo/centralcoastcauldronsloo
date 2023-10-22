@@ -113,7 +113,7 @@ def get_bottle_plan():
                 qty = min(qty_list)
                 result.append({
                     "potion_type": [pot_type[0], pot_type[1], pot_type[2], pot_type[3]],
-                    "quantity": qty,
+                    "quantity": qty
                 })
                 
         print("calculated qty list")
