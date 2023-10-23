@@ -103,10 +103,10 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             #increment total_potions
             total_potions += qty
             #increment gold
-            ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':50 * qty})
+            ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':30 * qty})
             ledgeID = ledgeID.fetchone()
             ledgeID = ledgeID.id
             desc = f'Bought {qty} of {potionType.sku} with gold ledge id of {ledgeID}'
             connection.execute(sqlalchemy.text("INSERT INTO transactions (description) VALUES (:desc)"), {'desc': desc})
-        print("total gold paid is: "  + str(total_potions * 50))
-        return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*50}
+        print("total gold paid is: "  + str(total_potions * 30))
+        return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*30}

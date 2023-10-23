@@ -28,11 +28,10 @@ def get_catalog():
             print(quantity)
             if(quantity > 0):
                 result.append({
-                "sku": row.sku,
+                    "sku": row.sku,
                     "name": row.name,
                     "quantity": quantity,
                     "price": row.price,
                     "potion_type": [row.red, row.green, row.blue, row.dark],
                 })
-        
         return result
