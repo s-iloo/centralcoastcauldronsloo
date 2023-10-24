@@ -101,7 +101,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             # connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity - :qtybought WHERE sku = :potsku"), {'qtybought':qty, 'potsku':potionType.sku})
             connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:ch, :potID)"), {'ch':-item.quantity, 'potID': potionID})                
             #increment total_potions
-            total_potions += qty
+            total_potions += item.quantity
             #increment gold
             ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':30 * qty})
             ledgeID = ledgeID.fetchone()
