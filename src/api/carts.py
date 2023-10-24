@@ -83,7 +83,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         
         cartItems = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id=:cartID"), {'cartID':cart_id})
         cartItems = cartItems.fetchall()
-
         for item in cartItems:
             potionID = item.potion_id
             qty = item.quantity
@@ -110,5 +109,5 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             print(desc)
             connection.execute(sqlalchemy.text("INSERT INTO transactions (description) VALUES (:desc)"), {'desc': desc})
 
-        print("total gold paid is: "  + str(total_potions * 30))
-        return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*30}
+    print("total gold paid is: "  + str(total_potions * 30))
+    return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*30}
