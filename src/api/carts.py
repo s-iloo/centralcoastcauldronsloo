@@ -91,12 +91,11 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             print(potionID)
             print("qty")
             print(qty)
+            print("right before the supposed problem")
             potionType = connection.execute(sqlalchemy.text("SELECT * FROM potions WHERE id=:potion_id"), {'potion_id': potionID})
             potionType = potionType.fetchone()
             print("potion sku")
             print(potionType.sku)
-            
-            #if purple decrement purple qty in potions
             print("you're buying " + potionType.sku)
             connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:ch, :potID)"), {'ch':-item.quantity, 'potID': potionID})                
             #increment total_potions
