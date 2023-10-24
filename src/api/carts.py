@@ -78,15 +78,18 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
     print("payment: ")
     print(cart_checkout.payment)
-
+    total_potions = 0
     with db.engine.begin() as connection: 
-        total_potions = 0
+        
         cartItems = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id=:cartID"), {'cartID':cart_id})
         cartItems = cartItems.fetchall()
 
         for item in cartItems:
             potionID = item.potion_id
             qty = item.quantity
+            total_potions += item.quantity
+            print("current total_potions is: ")
+            print(total_potions)
             print("potion ID")
             print(potionID)
             print("qty")
@@ -98,14 +101,14 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             print(potionType.sku)
             print("you're buying " + potionType.sku)
             connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:ch, :potID)"), {'ch':-item.quantity, 'potID': potionID})                
-            #increment total_potions
-            total_potions += item.quantity
-            #increment gold
+            
             ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':30 * qty})
             ledgeID = ledgeID.fetchone()
             ledgeID = ledgeID.id
+
             desc = f'Bought {qty} of {potionType.sku} with gold ledge id of {ledgeID}'
             print(desc)
             connection.execute(sqlalchemy.text("INSERT INTO transactions (description) VALUES (:desc)"), {'desc': desc})
+
         print("total gold paid is: "  + str(total_potions * 30))
         return {"total_potions_bought": total_potions, "total_gold_paid": total_potions*30}
