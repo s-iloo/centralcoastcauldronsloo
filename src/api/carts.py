@@ -148,15 +148,13 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     with db.engine.begin() as connection: 
         result = connection.execute(sqlalchemy.text("SELECT cart_items.cart_id, cart_items.quantity, cart_items.potion_id, potions.price FROM cart_items LEFT JOIN potions ON cart_items.potion_id = potions.id WHERE cart_id = :cart_id"), 
                                     {"cart_id": cart_id})
-        # cartItems = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id=:cartID"), {'cartID':cart_id})
-        # cartItems = cartItems.fetchall()
         for item in result:
             potionID = item.potion_id
             qty = item.quantity
             total_potions += item.quantity
             payment = item.price * item.quantity
             total_price += payment
-            
+            print("payment: " + str(payment))
             print("current total_potions is: ")
             print(total_potions)
             print("potion ID")
