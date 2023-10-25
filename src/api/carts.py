@@ -82,7 +82,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     with db.engine.begin() as connection: 
         
         cartItems = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id=:cartID"), {'cartID':cart_id})
-        cartItems = cartItems.fetchall()
+        # cartItems = cartItems.fetchall()
         for item in cartItems:
             potionID = item.potion_id
             qty = item.quantity
