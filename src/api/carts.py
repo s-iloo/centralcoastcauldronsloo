@@ -29,6 +29,11 @@ def search_orders(
     sort_col: search_sort_options = search_sort_options.timestamp,
     sort_order: search_sort_order = search_sort_order.desc,
 ):
+    print("customer name: " + customer_name)
+    print("potion sku: " + potion_sku)
+    print("search_page: " + search_page)
+    print("sort_col: " + sort_col)
+    print("sort_order: " + sort_order)
     """
     Search for cart line items by customer name and/or potion sku.
 
