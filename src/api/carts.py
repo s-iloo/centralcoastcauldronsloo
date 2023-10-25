@@ -33,7 +33,17 @@ def search_orders(
     print("potion sku: " + potion_sku)
     print("search_page: " + search_page)
     print("sort_col: " + sort_col)
-    print("sort_order: " + sort_order)
+    print("sort_order: " + sort_order) #will either be desc or asc 
+
+    # if customer_name: 
+        # select from carts and cart items where name matches carts customer
+    # if potion_sku:
+        # select from customers that have bought this potion sku
+    # if search_page:
+        # i guess get the next page?
+    
+
+
     """
     Search for cart line items by customer name and/or potion sku.
 
@@ -73,6 +83,34 @@ def search_orders(
             {
                 "line_item_id": 1,
                 "item_sku": "1 oblivion potion bruh",
+                "customer_name": "Scaramouche",
+                "line_item_total": 50,
+                "timestamp": "2021-01-01T00:00:00Z",
+            },
+            {
+                "line_item_id": 3,
+                "item_sku": "1 oblivion potion bruh bruh",
+                "customer_name": "Scaramouche",
+                "line_item_total": 50,
+                "timestamp": "2021-01-01T00:00:00Z",
+            },
+            {
+                "line_item_id": 4,
+                "item_sku": "1 oblivion potion bruh bruh bruh",
+                "customer_name": "Scaramouche",
+                "line_item_total": 50,
+                "timestamp": "2021-01-01T00:00:00Z",
+            },
+            {
+                "line_item_id": 5,
+                "item_sku": "1 oblivion potion bruh bruh bruh bruh",
+                "customer_name": "Scaramouche",
+                "line_item_total": 50,
+                "timestamp": "2021-01-01T00:00:00Z",
+            },
+            {
+                "line_item_id": 6,
+                "item_sku": "1 oblivion potion bruh bruh bruh bruh bruh",
                 "customer_name": "Scaramouche",
                 "line_item_total": 50,
                 "timestamp": "2021-01-01T00:00:00Z",
