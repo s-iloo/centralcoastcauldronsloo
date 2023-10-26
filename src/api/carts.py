@@ -35,14 +35,27 @@ def search_orders(
     print("sort_col: " + sort_col)
     print("sort_order: " + sort_order) #will either be desc or asc 
 
-    # if customer_name: 
+    # stmt = (
+    #     sqlalchemy.select(
+    #         db.carts.customer,
+    #         db.potions.sku,
+    #         db.potions.price,
+    #         db.transactions.created_at
+    #     )
+    #     .limit(limit)
+    #     .offset(offset)
+    #     .order_by(order_by, db.movies.c.movie_id)
+    # )
+
+    # if customer_name != "": 
+    #     name = customer_name
         # select from carts and cart items where name matches carts customer
     # if potion_sku:
         # select from customers that have bought this potion sku
     # if search_page:
         # i guess get the next page?
     
-
+    # with db.engine.connect() as connection:
 
     """
     Search for cart line items by customer name and/or potion sku.
@@ -70,8 +83,8 @@ def search_orders(
     """
 
     return {
-        "previous": "",
-        "next": "",
+        "previous": "0",
+        "next": "2",
         "results": [
             {
                 "line_item_id": 2,
@@ -189,7 +202,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     total_potions = 0
     total_price = 0
     with db.engine.begin() as connection: 
-        result = connection.execute(sqlalchemy.text("SELECT cart_items.cart_id, cart_items.quantity, cart_items.potion_id, potions.price FROM cart_items LEFT JOIN potions ON cart_items.potion_id = potions.id WHERE cart_id = :cart_id"), 
+        result = connection.execute(sqlalchemy.text("SELECT cart_items.cart_id, cart_items.quantity, cart_items.potion_id, potions.price, potions.sku FROM cart_items LEFT JOIN potions ON cart_items.potion_id = potions.id WHERE cart_id = :cart_id"), 
                                     {"cart_id": cart_id})
         for item in result:
             potionID = item.potion_id
@@ -205,18 +218,18 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
             print("qty")
             print(qty)
             print("right before the supposed problem")
-            potionType = connection.execute(sqlalchemy.text("SELECT * FROM potions WHERE id=:potion_id"), {'potion_id': potionID})
-            potionType = potionType.fetchone()
+            # potionType = connection.execute(sqlalchemy.text("SELECT * FROM potions WHERE id=:potion_id"), {'potion_id': potionID})
+            # potionType = potionType.fetchone()
             print("potion sku")
-            print(potionType.sku)
-            print("you're buying " + potionType.sku)
+            print(item.sku)
+            print("you're buying " + item.sku)
             connection.execute(sqlalchemy.text("INSERT INTO potion_ledger (change, potion_id) VALUES (:ch, :potID)"), {'ch':-(item.quantity), 'potID': potionID})                
             
             ledgeID = connection.execute(sqlalchemy.text("INSERT INTO gold_ledger (change) VALUES (:ch) RETURNING id"), {'ch':payment})
             ledgeID = ledgeID.fetchone()
             ledgeID = ledgeID.id
 
-            desc = f'Bought {qty} of {potionType.sku} with gold ledge id of {ledgeID}'
+            desc = f'Bought {qty} of {item.sku} with gold ledge id of {ledgeID}'
             print(desc)
             connection.execute(sqlalchemy.text("INSERT INTO transactions (description) VALUES (:desc)"), {'desc': desc})
 
