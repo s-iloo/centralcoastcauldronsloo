@@ -33,7 +33,7 @@ def search_orders(
     if search_page == "":
         n = 0
     else: 
-        print("search_page: " + search_page)
+        print("search_page: " + str(search_page))
         n = int(search_page)
 
     # print("customer name: " + customer_name)
