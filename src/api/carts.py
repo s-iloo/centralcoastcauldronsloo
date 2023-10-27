@@ -90,37 +90,21 @@ def search_orders(
         
         returned = []
         # i = int(search_page)
+        i = 0
         for item in range(n, n + 4): 
-            
+            i += 1
+            print(i)
+
             returned.append({
                 "line_item_id": result[item].id,
                 "item_sku": result[item].sku,
                 "customer_name": result[item].customer,
                 "line_item_total": result[item].price * result[item].quantity,
                 "timestamp": result[item].created_at,
-            })
-            # print(item.created_at)
-            # print(item.customer)
-            # print(item.quantity)
-            # print(item.price)
-            # print(item.sku)
-        
+            })        
         length = len(result)
         print("length: " + str(length))
-        # if length > n + 5: 
-        #     next = n+5
-        
 
-
-    # if customer_name != "": 
-    #     name = customer_name
-        # select from carts and cart items where name matches carts customer
-    # if potion_sku:
-        # select from customers that have bought this potion sku
-    # if search_page:
-        # i guess get the next page?
-    
-    # with db.engine.connect() as connection:
 
     """
     Search for cart line items by customer name and/or potion sku.
