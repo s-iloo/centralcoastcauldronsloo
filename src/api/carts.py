@@ -90,16 +90,14 @@ def search_orders(
         
         returned = []
         i = 0
-        for item in result: 
-            if i >= 5: 
-                break
-            i += 1
+        for item in range(0, 5): 
+            
             returned.append({
-                "line_item_id": item.id,
-                "item_sku": item.sku,
-                "customer_name": item.customer,
-                "line_item_total": item.price * item.quantity,
-                "timestamp": item.created_at,
+                "line_item_id": result[item].id,
+                "item_sku": result[item].sku,
+                "customer_name": result[item].customer,
+                "line_item_total": result[item].price * result[item].quantity,
+                "timestamp": result[item].created_at,
             })
             print(item.created_at)
             print(item.customer)
