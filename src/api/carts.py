@@ -82,7 +82,7 @@ def search_orders(
         else: 
             next = ""
         if n >= 5: 
-            prev = str(search_page - 5)
+            prev = str(int(search_page) - 5)
         else: 
             prev = ""
 
