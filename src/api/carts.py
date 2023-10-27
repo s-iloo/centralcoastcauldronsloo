@@ -67,10 +67,14 @@ def search_orders(
         stmt = stmt.where(db.carts.customer.ilike(f"%{customer_name}%"))
 
     with db.engine.connect() as connection: 
-        result = sqlalchemy.text("SELECT customer, sku, price, quantity, created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id")
+        result = connection.execute(sqlalchemy.text("SELECT customer, sku, price, quantity, created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
         result = result.fetchall()
         for item in result: 
-            print(item)
+            print(item.created_at)
+            print(item.customer)
+            print(item.quantity)
+            print(item.price)
+            print(item.sku)
 
 
     # if customer_name != "": 
