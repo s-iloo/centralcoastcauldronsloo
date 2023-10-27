@@ -101,6 +101,7 @@ def search_orders(
         i = 0
         for item in range(n + 1, n + 6): 
             if item >= len(result):
+                next = ""
                 break
             print(i)
 
