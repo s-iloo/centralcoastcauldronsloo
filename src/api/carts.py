@@ -31,9 +31,10 @@ def search_orders(
 ):
     #getting the offset 
     if search_page == "":
-        n = str(0)
+        n = 0
     else: 
-        n = search_page
+        print("search_page: " + search_page)
+        n = int(search_page)
 
     # print("customer name: " + customer_name)
     # print("potion sku: " + potion_sku)
@@ -69,16 +70,32 @@ def search_orders(
     #     # .offset(offset)
     #     .order_by(order_by, db.carts.id)
     # )
+    
     if customer_name != "":
         stmt = stmt.where(db.carts.customer.ilike(f"%{customer_name}%"))
 
     with db.engine.connect() as connection: 
-        result = connection.execute(sqlalchemy.text("SELECT carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
+        result = connection.execute(sqlalchemy.text("SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
         result = result.fetchall()
+        if len(result) > 5: 
+            next = str(n + 5)
+        else: 
+            next = ""
+        if n >= 5: 
+            prev = str(search_page - 5)
+        else: 
+            prev = ""
+
+
+        
         returned = []
+        i = 0
         for item in result: 
+            if i >= 5: 
+                break
+            i += 1
             returned.append({
-                "line_item_id": 2,
+                "line_item_id": item.id,
                 "item_sku": item.sku,
                 "customer_name": item.customer,
                 "line_item_total": item.price * item.quantity,
@@ -133,8 +150,8 @@ def search_orders(
     """
 
     return {
-        "previous": "0",
-        "next": "2",
+        "previous": prev,
+        "next": next,
         "results": returned,
     }
 
