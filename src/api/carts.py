@@ -99,11 +99,11 @@ def search_orders(
                 "line_item_total": result[item].price * result[item].quantity,
                 "timestamp": result[item].created_at,
             })
-            print(item.created_at)
-            print(item.customer)
-            print(item.quantity)
-            print(item.price)
-            print(item.sku)
+            # print(item.created_at)
+            # print(item.customer)
+            # print(item.quantity)
+            # print(item.price)
+            # print(item.sku)
         
         length = len(result)
         print("length: " + str(length))
