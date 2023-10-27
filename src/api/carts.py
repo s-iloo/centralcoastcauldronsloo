@@ -35,7 +35,8 @@ def search_orders(
     else: 
         print("search_page: " + str(search_page))
         n = int(search_page)
-
+    next = ""
+    prev = ""
     # print("customer name: " + customer_name)
     # print("potion sku: " + potion_sku)
     # print("search_page: " + search_page)
@@ -77,17 +78,21 @@ def search_orders(
     with db.engine.connect() as connection: 
         result = connection.execute(sqlalchemy.text("SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
         result = result.fetchall()
+        for item in result: 
+            print(item.id)
+            print(item.sku)
+            print(item.customer)
+            print(item.quantity)
+            print(item.created_at)
+
+        if n >= 5: 
+            prev = str(int(search_page) - 5)
+
         if len(result) > 5: 
             if (prev == ""):
                 next = 5
             else: 
                 next = str(n + 5)
-        else: 
-            next = ""
-        if n >= 5: 
-            prev = str(int(search_page) - 5)
-        else: 
-            prev = ""
 
 
         
