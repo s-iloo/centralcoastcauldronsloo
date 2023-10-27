@@ -90,7 +90,7 @@ def search_orders(
         
         returned = []
         i = 0
-        for item in range(0, 5): 
+        for item in range(int(search_page), int(search_page) + 5): 
             
             returned.append({
                 "line_item_id": result[item].id,
