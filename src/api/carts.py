@@ -78,7 +78,10 @@ def search_orders(
         result = connection.execute(sqlalchemy.text("SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
         result = result.fetchall()
         if len(result) > 5: 
-            next = str(n + 5)
+            if (prev == ""):
+                next = 5
+            else: 
+                next = str(n + 5)
         else: 
             next = ""
         if n >= 5: 
@@ -92,7 +95,8 @@ def search_orders(
         # i = int(search_page)
         i = 0
         for item in range(n + 1, n + 6): 
-            i += 1
+            if item >= len(result):
+                break
             print(i)
 
             returned.append({
