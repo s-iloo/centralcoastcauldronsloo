@@ -29,19 +29,25 @@ def search_orders(
     sort_col: search_sort_options = search_sort_options.timestamp,
     sort_order: search_sort_order = search_sort_order.desc,
 ):
-    print("customer name: " + customer_name)
-    print("potion sku: " + potion_sku)
-    print("search_page: " + search_page)
-    print("sort_col: " + sort_col)
-    print("sort_order: " + sort_order) #will either be desc or asc 
-    if sort_col is "item_sku":
-        order_by = db.potions.sku
-    elif sort_col is "timestamp":
-        order_by = db.transactions.created_at 
-    elif sort_col is "line_item_total":
-        order_by = db.potions.price * db.cart_items.quantity
-    elif sort_col is "customer_name":
-        order_by = db.carts.customer
+    #getting the offset 
+    if search_page == "":
+        n = str(0)
+    else: 
+        n = search_page
+
+    # print("customer name: " + customer_name)
+    # print("potion sku: " + potion_sku)
+    # print("search_page: " + search_page)
+    # print("sort_col: " + sort_col)
+    # print("sort_order: " + sort_order) #will either be desc or asc 
+    # if sort_col is "item_sku":
+    #     order_by = db.potions.sku
+    # elif sort_col is "timestamp":
+    #     order_by = db.transactions.created_at 
+    # elif sort_col is "line_item_total":
+    #     order_by = db.potions.price * db.cart_items.quantity
+    # elif sort_col is "customer_name":
+    #     order_by = db.carts.customer
 
     # print(sqlalchemy.select(
     #         db.carts.customer,
@@ -69,12 +75,26 @@ def search_orders(
     with db.engine.connect() as connection: 
         result = connection.execute(sqlalchemy.text("SELECT carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
         result = result.fetchall()
+        returned = []
         for item in result: 
+            returned.append({
+                "line_item_id": 2,
+                "item_sku": item.sku,
+                "customer_name": item.customer,
+                "line_item_total": item.price * item.quantity,
+                "timestamp": item.created_at,
+            })
             print(item.created_at)
             print(item.customer)
             print(item.quantity)
             print(item.price)
             print(item.sku)
+        
+        length = len(result)
+        print("length: " + str(length))
+        if length > n + 5: 
+            next = n+5
+        
 
 
     # if customer_name != "": 
@@ -115,50 +135,7 @@ def search_orders(
     return {
         "previous": "0",
         "next": "2",
-        "results": [
-            {
-                "line_item_id": 2,
-                "item_sku": "1 oblivion potion",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            },
-            {
-                "line_item_id": 1,
-                "item_sku": "1 oblivion potion bruh",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            },
-            {
-                "line_item_id": 3,
-                "item_sku": "1 oblivion potion bruh bruh",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            },
-            {
-                "line_item_id": 4,
-                "item_sku": "1 oblivion potion bruh bruh bruh",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            },
-            {
-                "line_item_id": 5,
-                "item_sku": "1 oblivion potion bruh bruh bruh bruh",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            },
-            {
-                "line_item_id": 6,
-                "item_sku": "1 oblivion potion bruh bruh bruh bruh bruh",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            }
-        ],
+        "results": returned,
     }
 
 
