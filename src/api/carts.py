@@ -86,11 +86,12 @@ def search_orders(
         result += f" ORDER BY {order_by}"
         # result = connection.execute(sqlalchemy.text(result), params)   
         result = connection.execute(sqlalchemy.text(result))
+
+        result = result.fetchall()
         if customer_name != "":
             result = result.filter(db.carts.c.customer.ilike(f'%{customer_name}'))
         if potion_sku != "":
             result = result.filter(db.potions.c.sku.ilike(f'%{potion_sku}'))
-        result = result.fetchall()
         for item in result: 
             print(item.id)
             print(item.sku)
