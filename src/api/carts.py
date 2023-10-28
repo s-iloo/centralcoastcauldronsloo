@@ -64,7 +64,26 @@ def search_orders(
 
     with db.engine.connect() as connection: 
         # result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy :ascdesc"""),[{"orderBy": order_by, "ascdesc": sort_order.value.upper()}])
-        result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY {}""".format(order_by)),[{"orderBy": order_by}])
+        # result = sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY {}""".format(order_by))
+        result = """SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"""
+        customer_col = ""
+        potion_col = ""
+        if customer_name != "":
+            customer_col = "carts.customer"
+            result += f"WHERE {customer_col} = :name"
+            params = {"name": customer_name}
+        else:
+            params = {}
+        if potion_sku != "":
+            if "WHERE" in result:
+                result += " AND "
+            else: 
+                result += " WHERE "
+            potion_col = "potions.sku"
+            result += f"{potion_col} = :sku"
+            params["sku"] = potion_sku
+        result += f" ORDER BY {order_by}"
+        result = connection.execute(sqlalchemy.text(result), params)    
         result = result.fetchall()
         for item in result: 
             print(item.id)
