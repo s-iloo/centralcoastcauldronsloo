@@ -70,7 +70,7 @@ def search_orders(
         potion_col = ""
         if customer_name != "":
             customer_col = "carts.customer"
-            result += f"WHERE {customer_col} = :name"
+            result += f" WHERE {customer_col} = :name"
             params = {"name": customer_name}
         else:
             params = {}
