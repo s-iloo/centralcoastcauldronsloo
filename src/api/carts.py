@@ -43,13 +43,13 @@ def search_orders(
     # print("sort_col: " + sort_col)
     # print("sort_order: " + sort_order) #will either be desc or asc 
     if sort_col is search_sort_options.customer_name:
-        order_by = "customer"
+        order_by = "cart_items.customer"
     elif sort_col is search_sort_options.item_sku:
-        order_by = "sku"
+        order_by = "potions.sku"
     elif sort_col is search_sort_options.line_item_total:
-        order_by = "quantity"
+        order_by = "cart_items.quantity"
     elif sort_col is search_sort_options.timestamp:
-        order_by = "created_at"
+        order_by = "cart_items.created_at"
     else: 
         assert False
 
