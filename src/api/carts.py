@@ -63,7 +63,8 @@ def search_orders(
         stmt = stmt.where(db.carts.customer.ilike(f"%{customer_name}%"))
 
     with db.engine.connect() as connection: 
-        result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy :ascdesc"""),[{"orderBy": order_by, "ascdesc": sort_order.value.upper()}])
+        # result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy :ascdesc"""),[{"orderBy": order_by, "ascdesc": sort_order.value.upper()}])
+        result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy"""),[{"orderBy": order_by}])
         result = result.fetchall()
         for item in result: 
             print(item.id)
