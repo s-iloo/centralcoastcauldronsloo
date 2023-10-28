@@ -71,7 +71,7 @@ def search_orders(
         if customer_name != "":
             customer_col = "carts.customer"
             result += f" WHERE {customer_col} ILIKE :name"
-            params = {"name": customer_name}
+            params = {"name": f'%customer_name%'}
         else:
             params = {}
         if potion_sku != "":
@@ -81,7 +81,7 @@ def search_orders(
                 result += " WHERE "
             potion_col = "potions.sku"
             result += f"{potion_col} ILIKE :sku"
-            params["sku"] = potion_sku
+            params["sku"] = f'%potion_sku%'
 
         result += f" ORDER BY {order_by}"
         result = connection.execute(sqlalchemy.text(result), params)   
