@@ -43,7 +43,7 @@ def search_orders(
     # print("sort_col: " + sort_col)
     # print("sort_order: " + sort_order) #will either be desc or asc 
     if sort_col is search_sort_options.customer_name:
-        order_by = "cart_items.customer"
+        order_by = "carts.customer"
     elif sort_col is search_sort_options.item_sku:
         order_by = "potions.sku"
     elif sort_col is search_sort_options.line_item_total:
