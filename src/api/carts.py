@@ -68,30 +68,30 @@ def search_orders(
         result = """SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"""
         customer_col = ""
         potion_col = ""
-        # if customer_name != "":
-        #     customer_col = "carts.customer"
-        #     result += f" WHERE {customer_col} = :name"
-        #     params = {"name": customer_name}
-        # else:
-        #     params = {}
-        # if potion_sku != "":
-        #     if "WHERE" in result:
-        #         result += " AND "
-        #     else: 
-        #         result += " WHERE "
-        #     potion_col = "potions.sku"
-        #     result += f"{potion_col} = :sku"
-        #     params["sku"] = db.potions.c.sku.ilike(f"%{potion_sku}")
+        if customer_name != "":
+            customer_col = "carts.customer"
+            result += f" WHERE {customer_col} ILIKE :name"
+            params = {"name": customer_name}
+        else:
+            params = {}
+        if potion_sku != "":
+            if "WHERE" in result:
+                result += " AND "
+            else: 
+                result += " WHERE "
+            potion_col = "potions.sku"
+            result += f"{potion_col} ILIKE :sku"
+            params["sku"] = potion_sku
 
         result += f" ORDER BY {order_by}"
-        # result = connection.execute(sqlalchemy.text(result), params)   
+        result = connection.execute(sqlalchemy.text(result), params)   
         result = connection.execute(sqlalchemy.text(result))
 
         result = result.fetchall()
-        if customer_name != "":
-            result = result.filter(db.carts.c.customer.ilike(f'%{customer_name}'))
-        if potion_sku != "":
-            result = result.filter(db.potions.c.sku.ilike(f'%{potion_sku}'))
+        # if customer_name != "":
+        #     result = result.filter(db.carts.c.customer.ilike(f'%{customer_name}'))
+        # if potion_sku != "":
+        #     result = result.filter(db.potions.c.sku.ilike(f'%{potion_sku}'))
         for item in result: 
             print(item.id)
             print(item.sku)
