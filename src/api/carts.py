@@ -42,41 +42,28 @@ def search_orders(
     # print("search_page: " + search_page)
     # print("sort_col: " + sort_col)
     # print("sort_order: " + sort_order) #will either be desc or asc 
-    # if sort_col is "item_sku":
-    #     order_by = db.potions.sku
-    # elif sort_col is "timestamp":
-    #     order_by = db.transactions.created_at 
-    # elif sort_col is "line_item_total":
-    #     order_by = db.potions.price * db.cart_items.quantity
-    # elif sort_col is "customer_name":
-    #     order_by = db.carts.customer
+    if sort_col is search_sort_options.customer_name:
+        order_by = "customer"
+    elif sort_col is search_sort_options.item_sku:
+        order_by = "sku"
+    elif sort_col is search_sort_options.line_item_total:
+        order_by = "quantity"
+    elif sort_col is search_sort_options.timestamp:
+        order_by = "created_at"
+    else: 
+        assert False
 
-    # print(sqlalchemy.select(
-    #         db.carts.customer,
-    #         db.potions.sku,
-    #         db.potions.price,
-    #         db.cart_items.quantity,
-    #         db.transactions.created_at
-    #     ).order_by(order_by, db.carts.id))
-
-    # stmt = (
-    #     sqlalchemy.select(
-    #         db.carts.customer,
-    #         db.potions.sku,
-    #         db.potions.price,
-    #         db.cart_items.quantity,
-    #         db.transactions.created_at
-    #     )
-    #     # .limit(limit)
-    #     # .offset(offset)
-    #     .order_by(order_by, db.carts.id)
-    # )
+    if sort_order == search_sort_order.asc:
+        order = "ASC"
+    elif sort_order == search_sort_order.desc: 
+        order = "DESC"
+    
     
     if customer_name != "":
         stmt = stmt.where(db.carts.customer.ilike(f"%{customer_name}%"))
 
     with db.engine.connect() as connection: 
-        result = connection.execute(sqlalchemy.text("SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id"))
+        result = connection.execute(sqlalchemy.text("SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy :ascdesc"),[{"orderBy": order_by, "ascdesc": order}])
         result = result.fetchall()
         for item in result: 
             print(item.id)
