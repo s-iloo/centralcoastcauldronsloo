@@ -85,7 +85,7 @@ def search_orders(
 
         result += f" ORDER BY {order_by}"
         result = connection.execute(sqlalchemy.text(result), params)   
-        result = connection.execute(sqlalchemy.text(result))
+        # result = connection.execute(sqlalchemy.text(result))
 
         result = result.fetchall()
         # if customer_name != "":
