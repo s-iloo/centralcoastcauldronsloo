@@ -54,9 +54,9 @@ def search_orders(
         assert False
 
     if sort_order == search_sort_order.asc:
-        order = "ASC"
+        order_by += " ASC"
     elif sort_order == search_sort_order.desc: 
-        order = "DESC"
+        order_by += " DESC"
     
     
     if customer_name != "":
@@ -64,7 +64,7 @@ def search_orders(
 
     with db.engine.connect() as connection: 
         # result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy :ascdesc"""),[{"orderBy": order_by, "ascdesc": sort_order.value.upper()}])
-        result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY :orderBy"""),[{"orderBy": order_by}])
+        result = connection.execute(sqlalchemy.text("""SELECT carts.id, carts.customer, potions.sku, potions.price, cart_items.quantity, cart_items.created_at FROM carts INNER JOIN cart_items ON carts.id = cart_items.cart_id INNER JOIN potions ON potions.id = cart_items.potion_id ORDER BY {}""".format(order_by)),[{"orderBy": order_by}])
         result = result.fetchall()
         for item in result: 
             print(item.id)
